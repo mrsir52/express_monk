@@ -50,7 +50,7 @@ app.delete("/inventory", async (req, res) => {
   });
   
 });
-
+//test
 // app.get("/inventory", async function(req, res) {
 //   const results = await inventory.findOne({_id: "req.body.id"}, "_id");
 //   res.send('DELETE request to homepage')
