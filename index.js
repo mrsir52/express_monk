@@ -5,8 +5,8 @@ const app = express();
 const port = 4000;
 
 const cors = require("cors");
+const bodyParser = require('body-parser')
 
-const bodyParser = require("body-parser");
 
 const monk = require("monk");
 // const MongoClient = require("mongodb").MongoClient;
@@ -28,7 +28,7 @@ const cart = db.get("cart")
 
 app.use(cors());
 app.use(bodyParser.json());
-
+app.use(bodyParser.json())
 //Inventory
 app.get("/inventory", async function(req, res) {
   const results = await inventory.find();
@@ -62,9 +62,8 @@ app.post('/inventory',async function (req, res) {
 })
 
 app.put('/inventory/:id', async (req, res) => {
- 
   const results = await inventory.findOneAndUpdate(req.params.id, req.body)
-  console.log(`i'm updated`)
+  
   res.status(200).send(results)
 })
 
