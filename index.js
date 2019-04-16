@@ -3,7 +3,10 @@
 const express = require("express");
 const app = express();
 const port = 4000;
+const jwt = require("jsonwebtoken");
+const keys = require("./config/keys");
 
+const url = require('./config/keys').mongoURI
 const cors = require("cors");
 const bodyParser = require('body-parser')
 
@@ -11,7 +14,7 @@ const bodyParser = require('body-parser')
 const monk = require("monk");
 // const MongoClient = require("mongodb").MongoClient;
 // const ObjectId = require("mongodb").ObjectID;
-const url = "mongodb://helioadmin:password1234@cluster0-shard-00-00-lbz6b.mongodb.net:27017,cluster0-shard-00-01-lbz6b.mongodb.net:27017,cluster0-shard-00-02-lbz6b.mongodb.net:27017/inventory?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true";
+
 
 
 // const db is how you set your database path. Here we use monk to
@@ -23,6 +26,7 @@ const db = monk(url);
   console.log("connected");
 });
 
+const users = db.get('users')
 const inventory = db.get("items")
 const cart = db.get("cart")
 
@@ -40,7 +44,7 @@ app.delete("/inventory", async (req, res) => {
     if(err) {
       throw err;
   }
-  res.send('DELETE request to homepage')
+  res.send('DELETE request to homepage')// sends back deleted collection
   });
   
 });
@@ -83,6 +87,30 @@ app.post('/cart',async function (req, res) {
 // app.delete('/:_id', async function (req, res) {
 //     res.send('DELETE request to homepage');
 //   });
+
+
+app.post('/login', async (req, res) => {
+  const email = req.body.email
+   //Create JWT Payload
+  const results = await users.findOne({email})
+  // const token = jwt.sign(payload, keys.secretOrKey)
+  // res.cookie('jwt', token)
+  const payload ={id: req.body.id, name: req.body.name, email: req.body.email}
+  const token = jwt.sign(payload, 
+      keys.secretOrKey, 
+      (err, token)=> {
+          res.json({
+          token: token // 'Bearer'
+        })
+        res.status(200).send({msg: "success" });
+      })
+})
+
+
+app.get("/current", async function(req, res) {
+  const results = await users.findOne(({email}));
+  res.status(200).send(results);
+});
 
 app.listen(port, () => console.log(`App listening on port ${port}!`));
 
