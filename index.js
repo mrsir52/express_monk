@@ -2,7 +2,7 @@
 //on the expressjs website
 const express = require("express");
 const app = express();
-const port = 4000;
+const port = process.env.port || 4000;
 const jwt = require("jsonwebtoken");
 const keys = require("./config/keys");
 
